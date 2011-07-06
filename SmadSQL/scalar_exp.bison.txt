@@ -1,0 +1,74 @@
+scalar_exp:
+		//{ st.tree->push($1); st.tree->push($3); st.tree->push (new SQLexpr (1,0,'+')); }
+		//{ SQLexpr* a = st.tree->top(),*b = st.tree->top2(); if ( a && b && a->type==0 && b->type==0) { st.tree->push ( new SQLexpr(0,st.tree->pop()->value + st.tree->pop()->value) ); } else  st.tree->push (new SQLexpr (1,0,'+')); }
+		scalar_exp '+' scalar_exp	{ st.tree->push (new SQLexpr (1,0,'+')); }
+	|	scalar_exp '-' scalar_exp	{ st.tree->push (new SQLexpr (1,0,'-')); }
+	|	scalar_exp '*' scalar_exp	{ st.tree->push (new SQLexpr (1,0,'*')); }
+	|	scalar_exp '/' scalar_exp	{ st.tree->push (new SQLexpr (1,0,'/')); }
+	|	'-' scalar_exp %prec NEG	{}
+	|	'(' scalar_exp ')'			{ $$ = $2; }
+	|	STRING
+	{
+		SQLexpr* S1 = new SQLexpr;
+		S1->value = atol($1);
+		S1->type = 2;
+		$$ = S1;
+		st.tree->push (S1);
+	}
+	|	NUM							{
+		//if ( $$ == NULL ){ cerr << "ONCE"; $$ = new SQLList<SQLexpr*>;}
+		SQLexpr* S1 = new SQLexpr;
+		S1->value = $1;
+		S1->type = 0;
+		$$ = S1;
+		st.tree->push (S1);
+	}
+;
+//	|	column_ref					{ SQLexpr* S = new SQLexpr; S->type=2; S->ptr = $1; }
+//	|	atom						{} // remove NUM
+
+
+search_conditions:
+	{ $$ = new SQLList<SQLsearch*>; }
+	| search_conditions AND search_conditions { SQLsearch* S2 = new SQLsearch; S2->type = 1; st.search->push (S2); }
+	| search_conditions OR search_conditions { SQLsearch* S2 = new SQLsearch; S2->type = 2; st.search->push (S2); }
+	| '(' search_conditions ')'		{} //$$ = new SQLList<SQLsearch*>; }
+	| search_expr {
+		//$$ = new SQLList<SQLsearch*>; 
+//		cout << "TOKEN " << $1 << "\n" << flush;
+//		SQLsearch* S1 = new SQLsearch;
+//		S1->value = strdup($1); S1->type = 0; st.search->push (S1);
+		$1->type = 0;
+		st.search->push ($1);
+	}
+;
+
+search_expr:
+		scalar_exp { st.ltree=st.tree; st.tree=new SQLList<SQLexpr*>; }	TOK_EQUAL	scalar_exp 	{ st.rtree=st.tree; $$ = new SQLsearch; $$->lexpr = st.ltree; $$->rexpr=st.rtree; $$->OP='='; st.tree=new SQLList<SQLexpr*>; }
+	|	scalar_exp TOK_NEQUAL	scalar_exp 	{ }//$$ = new char [128]; strcpy ( $$ , $1 ); strcat ( $$ , "!=" ); strcat ( $$ , $3 ); }
+	|	scalar_exp '>'			scalar_exp 	{ }//$$ = new char [128]; strcpy ( $$ , $1 ); strcat ( $$ , ">" ); strcat ( $$ , $3 ); }
+	|	scalar_exp '<'			scalar_exp 	{ }//$$ = new char [128]; strcpy ( $$ , $1 ); strcat ( $$ , "<" ); strcat ( $$ , $3 ); }
+	|	scalar_exp TOK_GE		scalar_exp 	{ }//$$ = new char [128]; strcpy ( $$ , $1 ); strcat ( $$ , ">=" ); strcat ( $$ , $3 ); }
+	|	scalar_exp TOK_LE		scalar_exp	{ }//$$ = new char [128]; strcpy ( $$ , $1 ); strcat ( $$ , "<=" ); strcat ( $$ , $3 ); }
+;
+//$$ = new char [128]; strcpy ( $$ , $1 ); strcat ( $$ , "=" ); strcat ( $$ , $3 ); }
+
+
+
+			SQLList<SQLexpr*>* l = s->lexpr;
+			SQLList<SQLexpr*>* r = s->rexpr;
+		
+			ReduceTree (l);
+			cout << "LVALUE:\n" << flush;
+			for (int j=0;j<l->Count();j++) cout << "  " << (l->at(j)->type?l->at(j)->token:l->at(j)->value) << "\n" << flush;
+			cout << "OP: " << (char)s->OP << endl;
+			cout << "RVALUE:\n" << flush;
+			for (int j=0;j<r->Count();j++) cout << "  " << (r->at(j)->type?r->at(j)->token:r->at(j)->value) << "\n" << flush;
+
+/*	st.tree = st.rtree;
+	cout << "===TREE REPORTING=" << flush;
+	cout << st.tree->Count() << "\n" << flush;
+	for (int i=0;i<st.tree->Count();i++)
+		cout << (st.tree->at(i)->type?st.tree->at(i)->token:st.tree->at(i)->value) << "\n" << flush;
+	ParseExpressionTree ( st.rtree );
+*/

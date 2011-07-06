@@ -1,0 +1,71 @@
+// SMAD-SQL v0.1
+// Copyright (C)2003 by:
+//		Faisal Nasim	(Email: Faisal@Nasim.org)
+//		Usman Ghani		(Email: worldsoft64@yahoo.com)
+//
+// THIS CODE IS LICENSED UNDER GNU GPL
+// Developer: usman
+
+#ifndef __SQL_DATABASEHPP
+#define __SQL_DATABASEHPP
+
+#define SMAD_NO_ERROR 0
+#define DB_LIST_FILE_CANT_BE_OPENED 1
+#define DB_FILE_CANT_BE_OPENED 2
+#define TABLE_DOES_NOT_EXIST 3
+#define TABLE_ALREADY_EXISTS 4
+#define DATABASE_ALREADY_EXISTS 5
+
+#define DBPATH		"c:\\tmp\\smadsql\\"
+
+#include <SQLList.hpp>
+#include <Table.h>
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
+
+/*
+namespace DBLIST
+{
+	extern std::map<std::string,std::string> dblist;
+	extern bool isInit;
+	extern std::string DBlistfile;
+
+	bool DBExists			(const DataBase& d);
+	int CreateNewDataBase	(const std::string& name);
+	int InitList			(char*name);
+};
+*/
+
+class DataBase
+{
+	string name;
+	string filename;
+	fstream dbfile;
+
+public:
+	map<string,Table*> TABLES;
+
+	DataBase () {}
+	DataBase (const string& );
+	DataBase (const char* );
+	~DataBase ();
+
+	int open (const string&);
+	const string& GetName() const;
+	Table*	GetTable	(char* name)	{ return open_table (name); }
+
+	//returns a reference to the internal list of tables
+	const map<string,Table*>& get_tables() const;
+	bool is_table_open(const string& );
+	Table* open_table(const string& );
+	Table* open_table(const char* );
+   //this method is for adding a table from some other database
+	bool add_table (DataBase&, Table&);
+	//this method is for creating a new table and adding it to the data base;
+	int create_table(const string& , const vector<FIELD_DEF>&);
+    bool table_exists(const string& ) const;	
+};
+
+#endif

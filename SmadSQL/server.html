@@ -1,0 +1,195 @@
+<html>
+<head>
+  <title>Server.cpp</title>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<pre>
+<font color="#444444">// SMAD-SQL v0.1</font>
+<font color="#444444">// Copyright (C)2003 by:</font>
+<font color="#444444">//		Faisal Nasim	(Email: Faisal@Nasim.org)</font>
+<font color="#444444">//		Usman Ghani		(Email: worldsoft64@yahoo.com)</font>
+<font color="#444444">//</font>
+<font color="#444444">// THIS CODE IS LICENSED UNDER GNU GPL</font>
+<font color="#444444">//</font>
+<font color="#444444">// Provides the server functionality</font>
+
+<font color="#444444">// developer: Faisal@Nasim.org</font>
+<font color="#444444">// $Id$</font>
+
+<font color="0000ff"><strong>#include <font color="#008000">&lt;Base.hpp&gt;</font></strong></font>
+<font color="0000ff"><strong>#include <font color="#008000">&lt;Server.hpp&gt;</font></strong></font>
+
+<strong>using</strong> <strong>namespace</strong> <font color="#2040a0">std</font><font color="4444FF">;</font>
+
+<strong>int</strong>		<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">GetPort</font> <font color="4444FF">(</font><font color="4444FF">)</font>				<font color="4444FF"><strong>{</strong></font> <strong>return</strong> <font color="#2040a0">port</font><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+<strong>void</strong>	<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">SetPort</font> <font color="4444FF">(</font> <strong>int</strong> <font color="#2040a0">port</font> <font color="4444FF">)</font>	<font color="4444FF"><strong>{</strong></font> <strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">port</font> <font color="4444FF">&gt;</font> <font color="#FF0000">0</font> <font color="4444FF">&amp;</font><font color="4444FF">&amp;</font> <font color="#2040a0">port</font> <font color="4444FF">&lt;</font> <font color="#FF0000">65536</font> <font color="4444FF">)</font> <strong>this</strong><font color="4444FF">-</font><font color="4444FF">&gt;</font><font color="#2040a0">port</font> <font color="4444FF">=</font> <font color="#2040a0">port</font><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+<strong>void</strong>	<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">DebugOn</font> <font color="4444FF">(</font><font color="4444FF">)</font>				<font color="4444FF"><strong>{</strong></font> <font color="#2040a0">DEBUGMODE</font> <font color="4444FF">=</font> <strong>true</strong><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+<strong>void</strong>	<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">DebugOff</font> <font color="4444FF">(</font><font color="4444FF">)</font>				<font color="4444FF"><strong>{</strong></font> <font color="#2040a0">DEBUGMODE</font> <font color="4444FF">=</font> <strong>false</strong><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+<strong>void</strong>	<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">SetHandler</font> <font color="4444FF">(</font> <strong>int</strong> <font color="4444FF">(</font><font color="4444FF">*</font><font color="#2040a0">ptr</font><font color="4444FF">)</font><font color="4444FF">(</font><strong>char</strong><font color="4444FF">*</font> , <strong>int</strong> , <font color="#2040a0">Server</font><font color="4444FF">&amp;</font> , <font color="#2040a0">Client</font><font color="4444FF">&amp;</font> <font color="4444FF">)</font> <font color="4444FF">)</font> <font color="4444FF"><strong>{</strong></font> <font color="#2040a0">handler</font> <font color="4444FF">=</font> <font color="#2040a0">ptr</font><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+
+<strong>int</strong>		<font color="#2040a0">Client</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">Disconnect</font> <font color="4444FF">(</font><font color="4444FF">)</font>			<font color="4444FF"><strong>{</strong></font> <font color="#2040a0">IsConnected</font> <font color="4444FF">=</font> <strong>false</strong><font color="4444FF">;</font> <strong>return</strong> <font color="#2040a0">closesocket</font> <font color="4444FF">(</font> <font color="#2040a0">socket</font> <font color="4444FF">)</font><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+<strong>int</strong>		<font color="#2040a0">Client</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">SendData</font> <font color="4444FF">(</font> <strong>char</strong><font color="4444FF">*</font> <font color="#2040a0">str</font> , <strong>int</strong> <font color="#2040a0">len</font> <font color="4444FF">)</font><font color="4444FF"><strong>{</strong></font> <strong>return</strong> <font color="#2040a0">send</font> <font color="4444FF">(</font> <font color="#2040a0">socket</font> , <font color="#2040a0">str</font> , <font color="#2040a0">len</font> , <font color="#FF0000">0</font> <font color="4444FF">)</font><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+<strong>int</strong>		<font color="#2040a0">Client</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">GetSocket</font> <font color="4444FF">(</font><font color="4444FF">)</font>			<font color="4444FF"><strong>{</strong></font> <strong>return</strong> <font color="#2040a0">socket</font><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+<strong>void</strong>	<font color="#2040a0">Client</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">SetSocket</font> <font color="4444FF">(</font><strong>int</strong> <font color="#2040a0">s</font><font color="4444FF">)</font>		<font color="4444FF"><strong>{</strong></font> <font color="#2040a0">socket</font> <font color="4444FF">=</font> <font color="#2040a0">s</font><font color="4444FF">;</font> <strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">s</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#2040a0">INVALID_SOCKET</font> <font color="4444FF">)</font> <font color="#2040a0">IsConnected</font> <font color="4444FF">=</font> <strong>true</strong><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+
+<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">Server</font> <font color="4444FF">(</font><font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>
+	<font color="#2040a0">serversocket</font> <font color="4444FF">=</font> <font color="#2040a0">INVALID_SOCKET</font><font color="4444FF">;</font>
+	<font color="#2040a0">ISRUNNING</font> <font color="4444FF">=</font> <strong>false</strong><font color="4444FF">;</font>
+
+	<font color="#2040a0">WORD</font> <font color="#2040a0">wVersionRequested</font><font color="4444FF">;</font>
+	<font color="#2040a0">WSADATA</font> <font color="#2040a0">wsaData</font><font color="4444FF">;</font>
+	<font color="#2040a0">wVersionRequested</font> <font color="4444FF">=</font> <font color="#2040a0">MAKEWORD</font><font color="4444FF">(</font> <font color="#FF0000">2</font>, <font color="#FF0000">0</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+	<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">WSAStartup</font><font color="4444FF">(</font> <font color="#2040a0">wVersionRequested</font>, <font color="4444FF">&amp;</font><font color="#2040a0">wsaData</font> <font color="4444FF">)</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#FF0000">0</font> <font color="4444FF">)</font>
+	<font color="4444FF"><strong>{</strong></font>
+		<font color="#2040a0">cerr</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;Socket Initialization Error!&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+		<strong>return</strong><font color="4444FF">;</font>
+	<font color="4444FF"><strong>}</strong></font>
+	<font color="#2040a0">DebugOff</font> <font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font>~<font color="#2040a0">Server</font> <font color="4444FF">(</font><font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>
+	<font color="#2040a0">StopServer</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+	<font color="#2040a0">WSACleanup</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+<font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">Server</font> <font color="4444FF">(</font><strong>int</strong> <font color="#2040a0">port</font><font color="4444FF">)</font>	<font color="4444FF"><strong>{</strong></font> <font color="#2040a0">Server</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font> <strong>this</strong><font color="4444FF">-</font><font color="4444FF">&gt;</font><font color="#2040a0">port</font> <font color="4444FF">=</font> <font color="#2040a0">port</font><font color="4444FF">;</font> <font color="4444FF"><strong>}</strong></font>
+
+<strong>void</strong> <font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">StopServer</font> <font color="4444FF">(</font><font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>
+	<font color="#2040a0">ISRUNNING</font> <font color="4444FF">=</font> <strong>false</strong><font color="4444FF">;</font>		
+	<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">serversocket</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#2040a0">INVALID_SOCKET</font> <font color="4444FF">)</font>
+		<font color="#2040a0">closesocket</font> <font color="4444FF">(</font><font color="#2040a0">serversocket</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+<strong>void</strong> <font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">StartServer</font> <font color="4444FF">(</font><font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>
+	<font color="#2040a0">host</font> <font color="4444FF">=</font> <font color="#008000">&quot;127.0.0.1&quot;</font><font color="4444FF">;</font>
+	<font color="#2040a0">server_host_name</font> <font color="4444FF">=</font> <font color="#2040a0">gethostbyname</font> <font color="4444FF">(</font> <font color="#2040a0">host</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+	<font color="#2040a0">memset</font> <font color="4444FF">(</font> <font color="4444FF">&amp;</font><font color="#2040a0">sin</font> , <font color="#FF0000">0</font> , <strong>sizeof</strong> <font color="4444FF">(</font><font color="#2040a0">sin</font><font color="4444FF">)</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+
+	<font color="#2040a0">serversocket</font> <font color="4444FF">=</font> <font color="#2040a0">socket</font><font color="4444FF">(</font><font color="#2040a0">AF_INET</font>,<font color="#2040a0">SOCK_STREAM</font>,<font color="#FF0000">0</font><font color="4444FF">)</font><font color="4444FF">;</font>
+
+	<font color="#2040a0">sin</font>.<font color="#2040a0">sin_family</font> <font color="4444FF">=</font> <font color="#2040a0">AF_INET</font><font color="4444FF">;</font>
+	<font color="#2040a0">sin</font>.<font color="#2040a0">sin_addr</font>.<font color="#2040a0">s_addr</font> <font color="4444FF">=</font> <font color="#2040a0">htonl</font> <font color="4444FF">(</font><font color="#2040a0">INADDR_ANY</font><font color="4444FF">)</font><font color="4444FF">;</font>
+	<font color="#2040a0">sin</font>.<font color="#2040a0">sin_port</font> <font color="4444FF">=</font> <font color="#2040a0">htons</font> <font color="4444FF">(</font><font color="#2040a0">port</font><font color="4444FF">)</font><font color="4444FF">;</font>
+	<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">bind</font><font color="4444FF">(</font><font color="#2040a0">serversocket</font>, <font color="4444FF">(</font><font color="#2040a0">sockaddr</font><font color="4444FF">*</font><font color="4444FF">)</font> <font color="4444FF">&amp;</font><font color="#2040a0">sin</font> , <strong>sizeof</strong><font color="4444FF">(</font><font color="#2040a0">sin</font><font color="4444FF">)</font><font color="4444FF">)</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#2040a0">SOCKET_ERROR</font><font color="4444FF">)</font>
+		<font color="#2040a0">listen</font> <font color="4444FF">(</font> <font color="#2040a0">serversocket</font>, <font color="#FF0000">60</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+
+	<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;Listening on port &quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">port</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+
+	<font color="#2040a0">ISRUNNING</font> <font color="4444FF">=</font> <strong>true</strong><font color="4444FF">;</font>
+	<strong>int</strong> <font color="#2040a0">socksize</font> <font color="4444FF">=</font> <strong>sizeof</strong> <font color="4444FF">(</font> <font color="#2040a0">sockaddr_in</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+	
+	<strong>while</strong> <font color="4444FF">(</font><font color="#2040a0">ISRUNNING</font><font color="4444FF">)</font>
+	<font color="4444FF"><strong>{</strong></font>
+		<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;Waiting for a connection...&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">flush</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+
+		<font color="#2040a0">Client</font> <font color="#2040a0">C</font><font color="4444FF">;</font>
+		<font color="#2040a0">C</font>.<font color="#2040a0">SetSocket</font> <font color="4444FF">(</font> <font color="#2040a0">accept</font> <font color="4444FF">(</font> <font color="#2040a0">serversocket</font> , <font color="4444FF">(</font><font color="#2040a0">sockaddr</font><font color="4444FF">*</font><font color="4444FF">)</font> <font color="4444FF">&amp;</font><font color="#2040a0">C</font>.<font color="#2040a0">sinClient</font> , <font color="4444FF">&amp;</font><font color="#2040a0">socksize</font> <font color="4444FF">)</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+
+		<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">C</font>.<font color="#2040a0">GetSocket</font> <font color="4444FF">(</font><font color="4444FF">)</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#2040a0">INVALID_SOCKET</font><font color="4444FF">)</font>
+		<font color="4444FF"><strong>{</strong></font>
+			<font color="#2040a0">C</font>.<font color="#2040a0">SendData</font> <font color="4444FF">(</font> <font color="#008000">&quot;100 Hey there!<font color="#77dd77">\r</font><font color="#77dd77">\n</font>&quot;</font> , <font color="#FF0000">16</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+			<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;Accepted connection from &quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font>
+                <font color="#2040a0">inet_ntoa</font><font color="4444FF">(</font><font color="#2040a0">C</font>.<font color="#2040a0">sinClient</font>.<font color="#2040a0">sin_addr</font><font color="4444FF">)</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;:&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font>
+                <font color="#2040a0">ntohs</font><font color="4444FF">(</font><font color="#2040a0">C</font>.<font color="#2040a0">sinClient</font>.<font color="#2040a0">sin_port</font><font color="4444FF">)</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;.&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+		<font color="4444FF"><strong>}</strong></font>
+		<strong>else</strong> <font color="4444FF"><strong>{</strong></font>
+			<font color="#444444">//cout &lt;&lt; endl &lt;&lt; WSAGetLastErrorMessage(&quot;accept connection&quot;) &lt;&lt; endl;</font>
+			<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;ERRROR! :(<font color="#77dd77">\n</font>&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+		<font color="4444FF"><strong>}</strong></font>	
+
+	    <strong>if</strong> <font color="4444FF">(</font><font color="#2040a0">ParseCommand</font><font color="4444FF">(</font><font color="#2040a0">C</font><font color="4444FF">)</font><font color="4444FF">)</font>
+			<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;SHUTTING DOWN<font color="#77dd77">\n</font>&quot;</font><font color="4444FF">;</font>
+
+<font color="#444444">/*			char message [32];
+		int sin_len = sizeof (sin);
+		int bytes = recvfrom ( remotesd , message , 32 , 0 , (struct sockaddr*)&amp;sinRemote , &amp;sin_len );
+		if ( bytes &gt; 0 )
+			std::cout &lt;&lt; &quot;Response: &quot; &lt;&lt; message &lt;&lt; std::endl;
+		if ( ! strncmp ( message , &quot;stop&quot; , 4 ) ) break;
+*/</font>
+	<font color="4444FF"><strong>}</strong></font>	
+	<font color="#2040a0">closesocket</font> <font color="4444FF">(</font><font color="#2040a0">serversocket</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+<strong>int</strong> <font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">ParseCommand</font> <font color="4444FF">(</font><font color="#2040a0">Client</font><font color="4444FF">&amp;</font> <font color="#2040a0">C</font><font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>	
+	<strong>char</strong> <font color="#2040a0">acReadBuffer</font><font color="4444FF">[</font><font color="#2040a0">StackBuffer</font><font color="4444FF">]</font><font color="4444FF">;</font>
+	<strong>char</strong> <font color="#2040a0">statement</font> <font color="4444FF">[</font><font color="#2040a0">StatementBuffer</font><font color="4444FF">]</font><font color="4444FF">;</font>
+	<strong>char</strong><font color="4444FF">*</font> <font color="#2040a0">ptr</font> <font color="4444FF">=</font> <font color="#2040a0">statement</font><font color="4444FF">;</font>
+	<strong>int</strong> <font color="#2040a0">nReadBytes</font> , <font color="#2040a0">statementlen</font> <font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">;</font>
+	<strong>int</strong> <font color="#2040a0">sd</font> <font color="4444FF">=</font> <font color="#2040a0">C</font>.<font color="#2040a0">GetSocket</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+
+	<strong>do</strong>
+	<font color="4444FF"><strong>{</strong></font>
+		<strong>if</strong> <font color="4444FF">(</font> <font color="4444FF">!</font> <font color="#2040a0">ISRUNNING</font> <font color="4444FF">)</font> <strong>break</strong><font color="4444FF">;</font>
+		<font color="#2040a0">nReadBytes</font> <font color="4444FF">=</font> <font color="#2040a0">recv</font> <font color="4444FF">(</font><font color="#2040a0">sd</font>, <font color="#2040a0">acReadBuffer</font>, <font color="#2040a0">StackBuffer</font>, <font color="#FF0000">0</font><font color="4444FF">)</font><font color="4444FF">;</font>
+		<strong>if</strong> <font color="4444FF">(</font><font color="#2040a0">nReadBytes</font> <font color="4444FF">&gt;</font> <font color="#FF0000">0</font><font color="4444FF">)</font>
+		<font color="4444FF"><strong>{</strong></font>
+			<strong>int</strong> <font color="#2040a0">cnt</font> <font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">;</font>
+			<strong>while</strong> <font color="4444FF">(</font> <font color="#2040a0">cnt</font> <font color="4444FF">&lt;</font> <font color="#2040a0">nReadBytes</font> <font color="4444FF">)</font>
+			<font color="4444FF"><strong>{</strong></font>
+				<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">acReadBuffer</font> <font color="4444FF">[</font><font color="#2040a0">cnt</font><font color="4444FF">]</font> <font color="4444FF">=</font><font color="4444FF">=</font> <font color="#008000">'<font color="#77dd77">\n</font>'</font> <font color="4444FF">|</font><font color="4444FF">|</font> <font color="#2040a0">statementlen</font> <font color="4444FF">&gt;</font><font color="4444FF">=</font> <font color="#2040a0">StatementBuffer</font><font color="4444FF">-</font><font color="#FF0000">1</font> <font color="4444FF">)</font>
+				<font color="4444FF"><strong>{</strong></font>
+					<font color="4444FF">*</font><font color="#2040a0">ptr</font> <font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">;</font>
+					<font color="#2040a0">ProcessStatement</font> <font color="4444FF">(</font> <font color="#2040a0">C</font> , <font color="#2040a0">statement</font> , <font color="#2040a0">statementlen</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+					<font color="#2040a0">ptr</font> <font color="4444FF">=</font> <font color="#2040a0">statement</font><font color="4444FF">;</font>
+					<font color="#2040a0">statementlen</font> <font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">;</font>
+					<strong>break</strong><font color="4444FF">;</font>
+				<font color="4444FF"><strong>}</strong></font>
+				<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">acReadBuffer</font><font color="4444FF">[</font><font color="#2040a0">cnt</font><font color="4444FF">]</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#008000">'<font color="#77dd77">\r</font>'</font> <font color="4444FF">)</font>
+				<font color="4444FF"><strong>{</strong></font>
+					<font color="4444FF">*</font><font color="#2040a0">ptr</font><font color="4444FF">+</font><font color="4444FF">+</font> <font color="4444FF">=</font> <font color="#2040a0">acReadBuffer</font> <font color="4444FF">[</font><font color="#2040a0">cnt</font><font color="4444FF">]</font><font color="4444FF">;</font>
+					<font color="#2040a0">statementlen</font><font color="4444FF">+</font><font color="4444FF">+</font><font color="4444FF">;</font>
+				<font color="4444FF"><strong>}</strong></font>
+				<font color="#2040a0">cnt</font><font color="4444FF">+</font><font color="4444FF">+</font><font color="4444FF">;</font>
+			<font color="4444FF"><strong>}</strong></font>
+			
+			<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">DEBUGMODE</font> <font color="4444FF">)</font>
+				<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;Received &quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">nReadBytes</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot; bytes from client.&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+
+			<strong>int</strong> <font color="#2040a0">nSentBytes</font> <font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">;</font>
+			<strong>while</strong> <font color="4444FF">(</font><font color="#2040a0">nSentBytes</font> <font color="4444FF">&lt;</font> <font color="#2040a0">nReadBytes</font><font color="4444FF">)</font>
+			<font color="4444FF"><strong>{</strong></font>
+				<strong>int</strong> <font color="#2040a0">nTemp</font> <font color="4444FF">=</font> <font color="#2040a0">send</font><font color="4444FF">(</font><font color="#2040a0">sd</font>, <font color="#2040a0">acReadBuffer</font> <font color="4444FF">+</font> <font color="#2040a0">nSentBytes</font>, <font color="#2040a0">nReadBytes</font> <font color="4444FF">-</font> <font color="#2040a0">nSentBytes</font>, <font color="#FF0000">0</font><font color="4444FF">)</font><font color="4444FF">;</font>
+				<strong>if</strong> <font color="4444FF">(</font><font color="#2040a0">nTemp</font> <font color="4444FF">&gt;</font> <font color="#FF0000">0</font><font color="4444FF">)</font> <font color="4444FF"><strong>{</strong></font>
+					<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">DEBUGMODE</font> <font color="4444FF">)</font>
+						<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;Sent &quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">nTemp</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot; bytes back to client.&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+					<font color="#2040a0">nSentBytes</font> <font color="4444FF">+</font><font color="4444FF">=</font> <font color="#2040a0">nTemp</font><font color="4444FF">;</font>
+				<font color="4444FF"><strong>}</strong></font>
+				<strong>else</strong> <strong>if</strong> <font color="4444FF">(</font><font color="#2040a0">nTemp</font> <font color="4444FF">=</font><font color="4444FF">=</font> <font color="#2040a0">SOCKET_ERROR</font><font color="4444FF">)</font> <font color="4444FF"><strong>{</strong></font>
+					<strong>return</strong> <strong>false</strong><font color="4444FF">;</font>
+				<font color="4444FF"><strong>}</strong></font>
+				<strong>else</strong> <font color="4444FF"><strong>{</strong></font>
+					<font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#008000">&quot;Peer unexpectedly dropped connection!&quot;</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+					<strong>return</strong> <strong>true</strong><font color="4444FF">;</font>
+				<font color="4444FF"><strong>}</strong></font>
+			<font color="4444FF"><strong>}</strong></font>
+		<font color="4444FF"><strong>}</strong></font>
+		<strong>else</strong> <strong>if</strong> <font color="4444FF">(</font><font color="#2040a0">nReadBytes</font> <font color="4444FF">=</font><font color="4444FF">=</font> <font color="#2040a0">SOCKET_ERROR</font><font color="4444FF">)</font> <font color="4444FF"><strong>{</strong></font>
+			<strong>return</strong> <strong>false</strong><font color="4444FF">;</font>
+		<font color="4444FF"><strong>}</strong></font>
+	<font color="4444FF"><strong>}</strong></font> <strong>while</strong> <font color="4444FF">(</font><font color="#2040a0">nReadBytes</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">)</font><font color="4444FF">;</font>
+
+	<font color="#2040a0">DebugPrint</font> <font color="4444FF">(</font><font color="#008000">&quot;Connection closed by peer.&quot;</font><font color="4444FF">)</font><font color="4444FF">;</font>
+	<strong>return</strong> <font color="#FF0000">0</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+<strong>void</strong> <font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">ProcessStatement</font> <font color="4444FF">(</font> <font color="#2040a0">Client</font><font color="4444FF">&amp;</font> <font color="#2040a0">C</font> , <strong>char</strong><font color="4444FF">*</font> <font color="#2040a0">str</font> , <strong>int</strong> <font color="#2040a0">length</font> <font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>
+	<strong>int</strong> <font color="#2040a0">result</font> <font color="4444FF">=</font> <font color="4444FF">(</font><font color="4444FF">*</font><font color="#2040a0">handler</font><font color="4444FF">)</font> <font color="4444FF">(</font> <font color="#2040a0">str</font> , <font color="#2040a0">length</font> , <font color="4444FF">*</font><strong>this</strong> , <font color="#2040a0">C</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+<strong>void</strong> <font color="#2040a0">Server</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">DebugPrint</font> <font color="4444FF">(</font> <strong>const</strong> <strong>char</strong><font color="4444FF">*</font> <font color="#2040a0">str</font> <font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>
+	<strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">DEBUGMODE</font> <font color="4444FF">=</font><font color="4444FF">=</font> <strong>true</strong> <font color="4444FF">)</font> <font color="#2040a0">cout</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">str</font> <font color="4444FF">&lt;</font><font color="4444FF">&lt;</font> <font color="#2040a0">endl</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+</pre>
+<hr>
+syntax highlighted by <a href="http://www.palfrader.org/code2html">Code2HTML</a>, v. 0.9.1
+</body>
+</html>

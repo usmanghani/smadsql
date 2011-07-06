@@ -1,0 +1,103 @@
+// SMAD-SQL v0.1
+// Copyright (C)2003 by:
+//		Faisal Nasim	(Email: Faisal@Nasim.org)
+//		Usman Ghani		(Email: worldsoft64@yahoo.com)
+//
+// THIS CODE IS LICENSED UNDER GNU GPL
+// Developer: usman
+
+#ifndef __SQL_TABLEHPP
+#define __SQL_TABLEHPP
+
+#include <SQLList.hpp>
+#include <Field.hpp>
+#include <fcntl.h>
+
+/*
+class RECORD
+{
+public:
+	std::vector<SMADVARIANT> data;
+};
+
+class RecordSet
+{
+	std::vector <FIELD_DEF>	FIELDS;
+	std::vector <RECORD>	Records;
+	unsigned long totalrecords;
+public:
+	unsigned long TotalRecords() { return totalrecords; }
+	bool	InsertRecord	(RECORD&);
+	RECORD&	GetRecord		(RECORD&);
+
+	// FIFO like functionality
+	// FetchRecord will return a record read first
+	// after comparing search parameters and all
+	// while ( record = RSet->FetchRecord() ) {}
+
+	RECORD*	FetchRecord		(RECORD&);
+	bool	Refresh();
+};
+*/
+
+class Table
+{
+	// name of the table
+	string name;
+	// table data file
+	string filename;
+	//table index filename wont be needed in the 
+	// present scenario
+	string idxfilename;
+	// table definition filename 
+    string deffilename;
+	//  the number of records 
+	unsigned long num_recs;
+	// the size of each record 
+	unsigned long rec_size;
+	// the number of deleted records in the 
+	// deleted_recs  array
+	unsigned long num_del_recs;
+	// the pointers to the deleted records
+	long deleted_recs[MAX_DEL_RECS];
+    fstream tblfile,idxfile,deffile;
+    
+	//the list of fields
+	map<string,FIELD_DEF> field_defs;
+	bool is_record_deleted(long ptr_to_rec);
+
+public:
+//	TABLE();
+//	TABLE(const string& name);
+//	TABLE(const char* name);
+    ~Table();
+//	open(string name);
+//	open(char* name);
+	int open();
+	
+	//these five functions form the real essence of the whole 
+	//storage system
+    ////////////////////////////////////////////////////////
+	int get_record(RECORD& , CMPFN);
+	int insert_record(RECORD& );
+	int update_record(RECORD& , CMPFN );
+	int delete_record(CMPFN );
+	int get_recordset(RECORDSET& , CMPFN);
+    ////////////////////////////////////////////////////////
+
+	void SetName(const string& );
+	string GetName() const;
+	void SetIndexFileName(const string&);
+	string GetIndexFileName()const;
+	void SetDefFileName(const string&);
+	string GetDefFileName()const;
+	void SetTableFileName(const string& );
+	string GetTableFileName() const;
+    void PutField(const FIELD_DEF& );
+	FIELD_DEF GetField(const string& name) ;
+    const map<string,FIELD_DEF>& GetFields() const;
+
+    friend class DataBase;
+};
+
+#endif
